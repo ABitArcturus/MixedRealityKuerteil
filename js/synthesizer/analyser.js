@@ -29,7 +29,7 @@ function visualize() {
     const barWidth = canvas.width / bufferLength; */
 
     for (let i = 0; i < bufferLength; i++) {
-        const frequency = getFrequency(i);
+        const frequency = getFrequencyByIndex(i);
 
         // skip frequencies outside our hearing spectrum
         if (frequency < minFreq || frequency > maxFreq) {
@@ -45,6 +45,17 @@ function visualize() {
     /*     requestAnimationFrame(visualize); */
 
 }
+function getLoudness() {
+    analyser.getFloatFrequencyData(dataArrayFloat32);
+
+    let sum = 0;
+    for (let i = 0; i < bufferLength; i++) {
+        sum += Math.pow(dataArrayFloat32[i], 2); 
+    }
+
+    const rms = Math.sqrt(sum / bufferLength);  
+return rms;
+}
 
 /**
  * Calculates the frequency for the given bin index.
@@ -52,8 +63,21 @@ function visualize() {
  * @param {number} index - The bin index.
  * @return {number} The calculated frequency.
  */
-function getFrequency(index) {
+function getFrequencyByIndex(index) {
     return (index * nyquist) / bufferLength;
+}
+function getFrequency() {
+    let maxAmplitude = 0;
+    let maxIndex = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+        if (dataArrayUint8[i] > maxAmplitude) {
+            maxAmplitude = dataArrayUint8[i];
+            maxIndex = i;
+        }
+    }
+    const frequency = maxIndex * nyquist / bufferLength;
+    return frequency;
 }
 
 /* visualize();
@@ -108,8 +132,6 @@ function calculateAverageGain() {
  */        sum += dataArrayUint8[i];
 
     }
-    console.log("sum: ", sum);
-    console.log("sum/buff: ", sum / bufferLength);
     return sum / bufferLength;
 }
 ////////////////////////////////////////////////
@@ -228,4 +250,4 @@ function handleHighFrequency(frequency, gain) {
     console.log("high frequency: ", frequency.toFixed(2), " Hz, gain: ", gain.toFixed(2), " dB");
 }
 
-export { visualize, checkAverageGainOverThreshold, calculateAverageGain };
+export { visualize, checkAverageGainOverThreshold, calculateAverageGain, getFrequency, getLoudness };

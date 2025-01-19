@@ -14,6 +14,7 @@
 </head>
 
 <body>
+  <!-- back button -->
   <div style="position: fixed; top: 0; left: 0; z-index: 1;">
     <a href="#" onclick="window.location.href='index.html'">
       <img src="./assets/backbutton.png" alt="Back" class="back-button" style=" 
@@ -77,8 +78,8 @@
         <a-entity slider-line oscIndex="1"><a-entity>
             <a-box slider-knob oscIndex="2" class="clickable"></a-box>
             <a-entity slider-line oscIndex="2"><a-entity>
-                <a-box slider-knob oscIndex="3" class="clickable"></a-box>
-                <a-entity slider-line oscIndex="3"><a-entity>
+              <!--   <a-box slider-knob oscIndex="3" class="clickable"></a-box>
+                <a-entity slider-line oscIndex="3"><a-entity> -->
                     <a-box slider-knob oscIndex="4" class="clickable"></a-box>
                     <a-entity slider-line oscIndex="4"><a-entity>
                         <a-box slider-knob oscIndex="5" class="clickable"></a-box>
@@ -86,7 +87,7 @@
                             <a-box slider-knob oscIndex="6" class="clickable"></a-box>
                             <a-entity slider-line oscIndex="6"><a-entity>
 
-                                <a-box id="mover" position="0 0 -5"></a-box>
+                                <a-box id="mover" position="0 0 -9"></a-box>
 
                                 <!--   <a-entity line="start: 0 0.1 10; end: 0 0.1 -10; color: white"
       line__2="start: 5 0.1 10; end:5 0.2 -10; color: white"
@@ -120,9 +121,7 @@
                                     raycaster="objects: .clickable"></a-cursor>
                                 </a-camera>
 
-                                <a-entity geometry="primitive: plane" material="opacity: 0.5; side: double"
-                                  position="0 0 -1" camera look-at="[camera]" click-trigger
-                                  onclick="handleClick()"></a-entity>
+                               
   </a-scene>
 
 

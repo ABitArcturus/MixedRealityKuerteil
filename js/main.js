@@ -1,4 +1,4 @@
-import { calculateAverageGain, checkAverageGainOverThreshold, visualize } from "./synthesizer/analyser.js";
+import { calculateAverageGain, checkAverageGainOverThreshold, visualize, getFrequency, getLoudness } from "./synthesizer/analyser.js";
 import { OSC_Controller } from "./synthesizer/oscController.js";
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -22,20 +22,20 @@ function activateOSC() {
     controller.setOSCAttack(0.05)
     controller.setOSCRelease(0.1)
 
-    controller.setOSCFrequModGain(50);
+    controller.setOSCFrequModGain(100);
     controller.setOSCFreqModFreq(5.3);
 
     controllers.push(controller);
     isOSCPlaying.push(false);
 
-    const controller2 = new OSC_Controller();
-    controller2.setOSCAttack(0.05)
-    controller2.setOSCRelease(0.1)
-
-    controller2.setOSCFrequModGain(50);
-    controller2.setOSCFreqModFreq(5.3);
-
-    controllers2.push(controller);
+    /*    const controller2 = new OSC_Controller();
+       controller2.setOSCAttack(0.05)
+       controller2.setOSCRelease(0.1)
+   
+       controller2.setOSCFrequModGain(100);
+       controller2.setOSCFreqModFreq(5.3);
+   
+       controllers2.push(controller); */
   }
   controllers[0].setOSCFrequency(261);
 
@@ -43,40 +43,42 @@ function activateOSC() {
   controllers[1].setOSCWaveform("triangle");
 
   controllers[2].setOSCFrequency(659);
-  controllers[2].setOSCWaveform("sine");
-
+  /*   controllers[2].setOSCWaveform("sine");
+   */
   controllers[3].setOSCFrequency(698);
-  controllers[3].toggleOSCRingModFreq();
-
+  controllers[3].setOSCFreqModFreq(0.7);
+  controllers[3].setOSCWaveform("square");
+  /*   controllers[3].toggleOSCRingModFreq();
+   */
   controllers[4].setOSCFrequency(784);
   controllers[4].setOSCWaveform("triangle");
 
   controllers[5].setOSCFrequency(880);
 
-  controllers[6].setOSCFrequency(987);
+  controllers[6].setOSCFrequency(987); // 987
   controllers[6].setOSCFreqModFreq(15);
   controllers[6].setOSCWaveform("square");
 
   // 2nd oscillator
-  controllers2[0].setOSCFrequency(261);
-
-  controllers2[1].setOSCFrequency(587);
-  controllers2[1].setOSCWaveform("triangle");
-
-  controllers2[2].setOSCFrequency(659);
-  controllers2[2].setOSCWaveform("sine");
-
-  controllers2[3].setOSCFrequency(698);
-  controllers2[3].toggleOSCRingModFreq();
-
-  controllers2[4].setOSCFrequency(784);
-  controllers2[4].setOSCWaveform("triangle");
-
-  controllers2[5].setOSCFrequency(880);
-
-  controllers2[6].setOSCFrequency(987);
-  controllers2[6].setOSCFreqModFreq(15);
-  controllers2[6].setOSCWaveform("square");
+  /*   controllers2[0].setOSCFrequency(261);
+  
+    controllers2[1].setOSCFrequency(587);
+    controllers2[1].setOSCWaveform("triangle");
+  
+    controllers2[2].setOSCFrequency(659);
+    controllers2[2].setOSCWaveform("sine");
+  
+    controllers2[3].setOSCFrequency(698);
+    controllers[3].setOSCFreqModFreq(0.7);
+  
+    controllers2[4].setOSCFrequency(784);
+    controllers2[4].setOSCWaveform("triangle");
+  
+    controllers2[5].setOSCFrequency(880);
+  
+    controllers2[6].setOSCFrequency(987);
+    controllers2[6].setOSCFreqModFreq(15);
+    controllers2[6].setOSCWaveform("square"); */
 }
 
 let beingClicked = false; // for not accidentally triggering mouseup
@@ -150,10 +152,10 @@ AFRAME.registerComponent('tone-key', {
       currentIndex = el.getAttribute('oscIndex');
 
     let beingClicked = false;
+    // init
     el.setAttribute('scale', normalScale);
     el.setAttribute('position', `${positionsX[currentIndex]} ${positionY} ${positionsZ[currentIndex]}`);
     el.setAttribute('rotation', `0 ${rotationsY[currentIndex]} 0`);
-
 
     const isPlaying = isOSCPlaying[currentIndex];
 
@@ -188,7 +190,7 @@ AFRAME.registerComponent('tone-key', {
 
       if (!isClickActive) {
         isOSCPlaying[currentIndex] = true;
-        triggerOSC(currentIndex, isOSCPlaying[currentIndex]);
+        triggerOSC(currentIndex);
       }
     });
 
@@ -217,24 +219,22 @@ AFRAME.registerComponent('sinewave-box', {
 
       normalScale = `${boxWidthDefault} ${boxHeightDefault} ${boxDepthDefault}`,
       hoverScale = `${boxWidthDefault} ${boxHeightDefault} ${boxDepthDefault + 0.1}`,
-      currentIndex = sinewaveBox.getAttribute('oscIndex');
+      currentIndex = sinewaveBox.getAttribute('oscIndex'),
 
-    // setting up the text
+      waveforms = ["sine", "square", "sawtooth", "triangle"];
+
+    // setting up the text display
     sinewaveText.setAttribute('scale', '1 1 1');
     sinewaveText.setAttribute('position', '0 0 0.5');
-    for (let i = 0; i < totalNumberOfKeys; i++) {
-      sinewaveText.setAttribute('value', controllers[currentIndex].getOSCWaveform());
-    }
+    let currentWaveform = controllers[currentIndex].getOSCWaveform(),
+      currentWaveformIndex = waveforms.indexOf(currentWaveform);
+    sinewaveText.setAttribute('value', currentWaveform);
 
     el.setAttribute('scale', normalScale);
 
     // positioning
     el.setAttribute('position', `${positionsX[currentIndex]} ${positionY + distanceUp} ${positionsZ[currentIndex]}`);
     el.setAttribute('rotation', `0 ${rotationsY[currentIndex]} 0`);
-
-
-    const waveforms = ["sine", "square", "sawtooth", "triangle"];
-    let currentWaveform = 0;
 
     el.addEventListener('mouseenter', () => {
 
@@ -246,14 +246,12 @@ AFRAME.registerComponent('sinewave-box', {
         dur: 50
       });
 
+      currentWaveformIndex = (currentWaveformIndex + 1) % waveforms.length;
+      controllers[currentIndex].setOSCWaveform(waveforms[currentWaveformIndex]);
+      /*       controllers2[currentIndex].setOSCWaveform(waveforms[currentWaveformIndex]);
+      */
 
-      controllers[currentIndex].setOSCWaveform(waveforms[currentWaveform]);
-      controllers2[currentIndex].setOSCWaveform(waveforms[currentWaveform]);
-
-
-      currentWaveform = (currentWaveform + 1) % waveforms.length;
-      sinewaveText.setAttribute('value', waveforms[currentWaveform]);
-
+      sinewaveText.setAttribute('value', waveforms[currentWaveformIndex]);
     });
 
     el.addEventListener('mouseleave', () => {
@@ -302,9 +300,7 @@ function triggerOSC(controllerIndex) {
     controllers[controllerIndex].playOSC();
   } else {
     controllers[controllerIndex].stopOSC();
-    /* controller.stop(); */
   }
-
 }
 
 
@@ -440,10 +436,6 @@ AFRAME.registerComponent('slider-knob', {
       knob.object3D.position.set(currentPosition.x, newYPos, currentPosition.z);
     }
     );
-
-
-
-
   },
 
 
@@ -462,10 +454,17 @@ AFRAME.registerComponent('slider-line', {
   },
 });
 const mover = document.getElementById("mover");
+mover.setAttribute('color', 'lime');
+mover.setAttribute('depth', '0.1');
+mover.setAttribute('opacity', '0.5');
+const moverDefaultHeight = 0.1, moverDefaultWidth = 1;
 const minHeight = 0.5, maxHeight = 5;
+const minFreq = 20, maxFreq = 20000;
 
 function tick() {
-  mover.setAttribute('height', `0.796`);
+  // revert to default appearance
+  mover.setAttribute('height', moverDefaultHeight);
+  mover.setAttribute('width', moverDefaultWidth);
 
   if (isOSCPlaying.includes(true)) {
 
@@ -473,10 +472,21 @@ function tick() {
 
 
     // newHeight can be undefined (tick = faster than audio processing)
-    if (newHeight) {
-      const normalized = (newHeight - minHeight) / (maxHeight - minHeight);
-      mover.setAttribute('height', normalized);
-    }
+    /*    if (newHeight) {
+         const normalized = (newHeight - minHeight) / (maxHeight - minHeight);
+         mover.setAttribute('height', normalized);
+       } */
+
+    // frequency
+    let freq = getFrequency();
+    const normalizedFreq = (freq - minFreq) / (maxFreq - minFreq);
+    mover.setAttribute('width', `${moverDefaultWidth + normalizedFreq * 100}`);
+
+    const rms = getLoudness();
+    const normalizedRMS = Math.min(1, rms / 1000);
+    console.log(normalizedRMS);
+    mover.setAttribute('height', `${normalizedRMS*100 }`);
+
 
   }
   requestAnimationFrame(tick);
