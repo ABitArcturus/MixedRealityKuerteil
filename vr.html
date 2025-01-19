@@ -3,31 +3,29 @@
 
 <head>
   <meta charset="utf-8">
-  <title>clickable cube on pc and mobile </title>
+  <title>syntheziser in vr</title>
   <meta name="description" content="Hello, World! - A-Frame">
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <!-- <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script> -->
   <script type="module" src="./js/synthesizer/analyser.js"></script>
   <script type="module" src="./js/main.js"></script>
+
+
 </head>
 
 <body>
-  <button style="background-image: url('assets/backbutton.png');">
-    Mein Button
-</button>
-asd
-<a href="#" onclick="history.back()">
-  <img src="./assets/backbutton.png" alt="Back" class="back-button">
-</a>
-
-<button id="myButton" onclick="alert('Button geklickt!')">Klick mich!</button>
+  <div style="position: fixed; top: 0; left: 0; z-index: 1;">
+    <a href="#" onclick="window.location.href='index.html'">
+      <img src="./assets/backbutton.png" alt="Back" class="back-button" style=" 
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;">
+    </a>
+  </div>
   <a-scene>
     <!-- xyz - rechts oben vorne -->
-
-
-
-
-
 
     <!-- ///////////////////////////////////////////// keys -->
     <a-box tone-key oscIndex="0" class="clickable"></a-box>
@@ -88,7 +86,7 @@ asd
                             <a-box slider-knob oscIndex="6" class="clickable"></a-box>
                             <a-entity slider-line oscIndex="6"><a-entity>
 
-                              <a-box id="mover" position="0 0 -5" ></a-box>
+                                <a-box id="mover" position="0 0 -5"></a-box>
 
                                 <!--   <a-entity line="start: 0 0.1 10; end: 0 0.1 -10; color: white"
       line__2="start: 5 0.1 10; end:5 0.2 -10; color: white"
@@ -118,8 +116,13 @@ asd
                                 <!-- <a-box position="0 1 -2" rotation="0 45 0" color="#669999" class="clickable" tone-key0></a-box> -->
 
                                 <a-camera id="camera">
-                                  <a-cursor id="cursor" color="#FF0000" fuse="false" raycaster="objects: .clickable"></a-cursor>
+                                  <a-cursor id="cursor" color="#FF0000" fuse="false"
+                                    raycaster="objects: .clickable"></a-cursor>
                                 </a-camera>
+
+                                <a-entity geometry="primitive: plane" material="opacity: 0.5; side: double"
+                                  position="0 0 -1" camera look-at="[camera]" click-trigger
+                                  onclick="handleClick()"></a-entity>
   </a-scene>
 
 
