@@ -71,7 +71,7 @@ AFRAME.registerComponent('aframe-help-button', {
     // hover effect
     button.addEventListener('mouseenter', function () {
       el.setAttribute('scale', hoverScale);
-      if(isHoveringControl){
+      if (isHoveringControl) {
         performClick();
       }
     });
@@ -106,8 +106,8 @@ const frequencies = [
   1046, 1175, 1319, 1397, 1568, 1760, 1975,
   2093, 2349, 2637, 2794, 3136, 3520, 3951
 ];
-
-
+// mod = 0.2, 5.3, 0.7, 8, 10, 15
+const frequenciesModulation = [0.2, 0.7, 5.3, 8, 10, 15];
 
 let isAudioActive = false;
 let isHoveringControl = false;
@@ -125,7 +125,6 @@ function activateOSC() {
     controller.setOSCRelease(0.1)
 
     controller.setOSCFrequModGain(100);
-    controller.setOSCFreqModFreq(5.3);
 
     controllers.push(controller);
     isOSCPlaying.push(false);
@@ -140,25 +139,30 @@ function activateOSC() {
        controllers2.push(controller); */
   }
   controllers[0].setOSCFrequency(frequencies[0]);
+  controllers[0].setOSCFreqModFreq(frequenciesModulation[0]);
 
   controllers[1].setOSCFrequency(frequencies[8]);
+  controllers[1].setOSCFreqModFreq(frequenciesModulation[1]);
   controllers[1].setOSCWaveform("triangle");
 
   controllers[2].setOSCFrequency(frequencies[9]);
+  controllers[2].setOSCFreqModFreq(frequenciesModulation[2]);
   /*   controllers[2].setOSCWaveform("sine");
    */
   controllers[3].setOSCFrequency(frequencies[10]);
-  controllers[3].setOSCFreqModFreq(0.7);
+  controllers[3].setOSCFreqModFreq(frequenciesModulation[3]);
   controllers[3].setOSCWaveform("square");
   /*   controllers[3].toggleOSCRingModFreq();
    */
   controllers[4].setOSCFrequency(frequencies[11]);
   controllers[4].setOSCWaveform("triangle");
+  controllers[4].setOSCFreqModFreq(frequenciesModulation[4]);
 
   controllers[5].setOSCFrequency(frequencies[12]);
+  controllers[5].setOSCFreqModFreq(frequenciesModulation[5]);
 
   controllers[6].setOSCFrequency(frequencies[13]); // 987
-  controllers[6].setOSCFreqModFreq(15);
+  /* controllers[6].setOSCFreqModFreq(1000); */
   controllers[6].setOSCWaveform("square");
 
   // 2nd oscillator
@@ -549,6 +553,7 @@ function triggerOSC(controllerIndex) {
   }
   if (isOSCPlaying[controllerIndex]) {
     controllers[controllerIndex].playOSC();
+    console.log(controllers[controllerIndex].getOSCFreqModFreq());
   } else {
     controllers[controllerIndex].stopOSC();
   }
@@ -1086,5 +1091,74 @@ AFRAME.registerComponent('freq-adjust', {
       }
 
     }
+  }
+});
+
+
+AFRAME.registerComponent('potentiometer', {
+  init: function () {
+    const potentiometer = this.el,
+      currentIndex = potentiometer.getAttribute('oscIndex'),
+      knob = potentiometer.querySelector('[knob]'),
+      selector = potentiometer.querySelector('[selector]'),
+      valueAreas = potentiometer.querySelectorAll('a-cylinder[class=clickable]'),
+      thetaLength = valueAreas[0].getAttribute('theta-length'),
+      values = potentiometer.querySelectorAll('a-text');
+
+    const selectorPositions = []; // positions going together with frequenciesModulation[]
+    for (let i = 0; i < frequenciesModulation.length; i++) {
+      let position = parseInt(valueAreas[i].getAttribute('theta-start')) + thetaLength / 2;
+      let modfreq = frequenciesModulation[i];
+      selectorPositions.push({ position, modfreq });
+    }
+
+    let currentModFreq = controllers[currentIndex].getOSCFreqModFreq().toFixed(1); // the value of the modulation frequency can be slightly different
+/*     console.log(currentModFreq);
+ */    let positionCurrentModFreq = frequenciesModulation.indexOf(currentModFreq);
+    /*     console.log(positionCurrentModFreq);
+     */
+
+    values.forEach((value, i) => {
+      value.setAttribute('value', frequenciesModulation[i]);
+    })
+
+
+
+
+
+    potentiometer.setAttribute('position', `${positionsX[currentIndex]} ${positionY - 1.5} ${positionsZ[currentIndex]}`);
+    potentiometer.setAttribute('rotation', `0 ${rotationsY[currentIndex]} 0`);
+    potentiometer.setAttribute('scale', '0.25 0.25 0.1');
+
+    /* let currentSelectorPosition = selectorPositions[
+      frequenciesModulation.indexOf(controllers[currentIndex].getOSCFreqModFreq())
+    ]; */
+/*     selector.setAttribute('theta-start', selectorPositions[currentIndex].position);
+ */    selector.setAttribute('theta-length', 10);
+
+    // get the modulation frequencies TODO get from controller
+
+
+
+
+    /*  selector.setAttribute('theta-start', selectorPositions[i]); */
+
+    valueAreas.forEach((valueArea, i) => {
+      valueArea.addEventListener('mouseenter', () => {
+        valueArea.setAttribute('color', buttonColorHover);
+      });
+      valueArea.addEventListener('mouseleave', () => {
+        valueArea.setAttribute('color', boxColorDefault);
+      })
+      valueArea.addEventListener('click', () => {
+        controllers[currentIndex].setOSCFreqModFreq(selectorPositions[i].modfreq);
+        // value & value area go along with each other; getting with i
+        selector.setAttribute('theta-start', selectorPositions[i].position);
+        currentModFreq = controllers[currentIndex].getOSCFreqModFreq().toFixed(1);
+
+      });
+    });
+
+
   }
 });
