@@ -16,35 +16,43 @@
             if (!navigator.xr) {
                 // navigator.xr = globales objekt
                 console.log("This browser does not support WebXR.");
+                const message = document.createElement('p');
+                message.textContent = "This browser does not support WebXR.";
+                messages.appendChild(message);
+
 
             }
-
             const vrSupported = await navigator.xr.isSessionSupported('immersive-vr');
             if (vrSupported) {
                 console.log("vr supported: ", vrSupported);
+                const message = document.createElement('p');
+                message.textContent = "VR supported: " + vrSupported;
+                messages.appendChild(message);
             } else {
                 console.log("vr not supported");
+                const message = document.createElement('p');
+                message.textContent = "VR not supported";
+                messages.appendChild(message);
             }
-
             const arSupported = await navigator.xr.isSessionSupported('immersive-ar');
             if (arSupported) {
-                console.log("ar supported: ", arSupported);
+                const message = document.createElement('p');
+                message.textContent = "AR supported: " + arSupported;
+                messages.appendChild(message);
             } else {
-                console.log("ar not supported");
+                const message = document.createElement('p');
+                message.textContent = "AR not supported";
+                messages.appendChild(message);
             }
         }
         checkWebXR();
 
     </script>
-    <div class="text">
-        
+    <div id="messages"></div>
     </div>
     <div class="buttons">
-        <a href="vr.html" class="button">vr version</a>
-
-        <a href="ar.html" class="button">ar version</a>
-
-
+        <a href="vr.html" class="button">VR version</a>
+        <a href="ar.html" class="button">AR version</a>
     </div>
 </body>
 
