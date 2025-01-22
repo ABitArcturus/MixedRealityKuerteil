@@ -718,8 +718,8 @@ function tick() {
     mover.setAttribute('height', `${normalizedRMS * 100}`);
 
     test.setAttribute('visible', true);
-/*     test.setAttribute('light', `type: point; intensity: ${normalizedFreq*10}; distance: 10; decay: 2`);
- */
+    test.setAttribute('light', `type: point; intensity: ${normalizedFreq*10}; distance: 10; decay: 2`);
+
 
 
   }
