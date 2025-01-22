@@ -6,6 +6,7 @@ window.addEventListener('DOMContentLoaded', () => {
   addAFrameElements();
   activateOSC();
 });
+const test = document.querySelector('#test');
 
 // html help button
 document.getElementById('help-button').addEventListener('click', function () {
@@ -28,6 +29,7 @@ AFRAME.registerComponent('aframe-back-button', {
 
     // init
     el.setAttribute('scale', normalScale);
+    el.setAttribute('side', 'double');
 
     el.addEventListener('click', function () {
       window.location.href = 'index.html';
@@ -61,6 +63,7 @@ AFRAME.registerComponent('aframe-help-button', {
     // init
     el.setAttribute('scale', normalScale);
     questionMark.setAttribute('scale', `4 4 4`);
+    questionMark.setAttribute('side', 'double');
 
     // toggle visiibility
     button.addEventListener('click', function () {
@@ -238,7 +241,7 @@ for (let i = 0; i < totalNumberOfKeys; i++) {
 // TODO rename them better
 // default box appearance
 const boxColorDefault = "#e5dddd",
-  buttonColorHover = '#10630b',
+  buttonColorHover = '#46ff33',
   boxWidthDefault = 0.4,
   boxHeightDefault = 0.4,
   boxDepthDefault = 0.1,
@@ -260,25 +263,7 @@ AFRAME.registerComponent('tone-key', {
     el.setAttribute('position', `${positionsX[currentIndex]} ${positionY} ${positionsZ[currentIndex]}`);
     el.setAttribute('rotation', `0 ${rotationsY[currentIndex]} 0`);
 
-    /*     const isPlaying = isOSCPlaying[currentIndex];
-     */
-    /*   el.addEventListener('mousedown', () => {
-        beingClicked = true;
-        if (isClickActive) {
-       isOSCPlaying[currentIndex] = true;
-          triggerOSC(currentIndex);
-        }
-      }); */
 
-    /*    el.addEventListener('mouseup', () => {
-         if (beingClicked) {
-           if (isClickActive) {
-           isOSCPlaying[currentIndex] = false;
-             triggerOSC(currentIndex, isOSCPlaying[currentIndex]);
-           }
-           beingClicked = false;
-         }
-       }); */
 
 
     el.addEventListener('mouseenter', () => {
@@ -289,7 +274,6 @@ AFRAME.registerComponent('tone-key', {
         to: hoverScale,
         dur: 50
       });
-
       isOSCPlaying[currentIndex] = true;
       triggerOSC(currentIndex);
 
@@ -597,18 +581,7 @@ function run() {
 
 const minY = 0.5, maxY = positionY - distanceDown; // lower and upper limit of the slider
 
-let target = null;
-/* const cursor = document.getElementById('cursor');
 
-const camera = document.getElementById('camera');
-
-document.addEventListener('mousemove', (event) => {
-  
-  const cursorPosition = cursor.getAttribute('position');
-  let previousYPosition = camera.object3D.position.y;
-  console.log(previousYPosition);
-
-}); */
 
 AFRAME.registerComponent('slider-knob', {
 
@@ -713,7 +686,7 @@ const mover = document.getElementById("mover");
 mover.setAttribute('color', buttonColorActive);
 mover.setAttribute('depth', '0.1');
 mover.setAttribute('opacity', '0.5');
-const moverDefaultHeight = 0.1, moverDefaultWidth = 1;
+const moverDefaultHeight = 0, moverDefaultWidth = 1;
 const minHeight = 0.5, maxHeight = 5;
 const minFreq = 20, maxFreq = 20000;
 
@@ -721,6 +694,8 @@ function tick() {
   // revert to default appearance
   mover.setAttribute('height', moverDefaultHeight);
   mover.setAttribute('width', moverDefaultWidth);
+  test.setAttribute('visible', false);
+
 
   if (isOSCPlaying.includes(true)) {
 
@@ -741,6 +716,10 @@ function tick() {
     const rms = getLoudness();
     const normalizedRMS = Math.min(1, rms / 1000);
     mover.setAttribute('height', `${normalizedRMS * 100}`);
+
+    test.setAttribute('visible', true);
+/*     test.setAttribute('light', `type: point; intensity: ${normalizedFreq*10}; distance: 10; decay: 2`);
+ */
 
 
   }
@@ -798,60 +777,7 @@ AFRAME.registerComponent('freq-mod-box', {
   }
 });
 
-AFRAME.registerComponent('in', {
 
-
-  init: function () {
-
-    const el = this.el,
-      normalScale = `${smallerBoxWidthDefault} ${boxHeightDefault} ${boxDepthDefault}`,
-      hoverScale = `${smallerBoxWidthDefault} ${boxHeightDefault} ${boxDepthDefault + 0.1}`,
-      currentIndex = el.getAttribute('oscIndex');
-
-    let beingClicked = false;
-
-
-    el.setAttribute('position', `-0.2 0 0`);
-/*     el.setAttribute('rotation', `0 ${rotationsY[currentIndex]} 0`);
- */    el.setAttribute('scale', normalScale);
-
-    el.addEventListener('mousedown', () => {
-
-    });
-
-    el.addEventListener('mouseup', () => {
-
-    });
-
-    el.addEventListener('mouseenter', () => {
-      isHovering = true;
-      el.setAttribute('color', buttonColorHover);
-      el.setAttribute('animation', {
-        property: 'scale',
-        to: hoverScale,
-        dur: 50
-      });
-      controllers[currentIndex].setOSCFreqModFreq(controllers[currentIndex].getOSCFreqModFreq() + 10);
-
-
-
-      console.log(controllers[currentIndex].getOSCFreqModFreq());
-    });
-
-    el.addEventListener('mouseleave', () => {
-      isHovering = false;
-      el.setAttribute('color', boxColorDefault);
-      el.setAttribute('animation', {
-        property: 'scale',
-        to: normalScale,
-        dur: 50
-      });
-/*       controllers[currentIndex].setOSCFreqModFreq(controllers[currentIndex].getOSCFreqModFreq() - 10);
- */    });
-
-  }
-
-});
 
 // TODO limit freq mod
 AFRAME.registerComponent('de', {
@@ -1094,33 +1020,49 @@ AFRAME.registerComponent('freq-adjust', {
   }
 });
 
+const potentiometerSelectorPositions = [];
+let isSelectorPositionsSet = false;
+
 
 AFRAME.registerComponent('potentiometer', {
   init: function () {
     const potentiometer = this.el,
       currentIndex = potentiometer.getAttribute('oscIndex'),
-      knob = potentiometer.querySelector('[knob]'),
+      /* knob = potentiometer.querySelector('[knob]'), */
       selector = potentiometer.querySelector('[selector]'),
       valueAreas = potentiometer.querySelectorAll('a-cylinder[class=clickable]'),
       thetaLength = valueAreas[0].getAttribute('theta-length'),
       values = potentiometer.querySelectorAll('a-text');
 
-    const selectorPositions = []; // positions going together with frequenciesModulation[]
-    for (let i = 0; i < frequenciesModulation.length; i++) {
-      let position = parseInt(valueAreas[i].getAttribute('theta-start')) + thetaLength / 2;
-      let modfreq = frequenciesModulation[i];
-      selectorPositions.push({ position, modfreq });
+
+    if (!isSelectorPositionsSet) {
+      getSelectorPositions();
     }
 
-    let currentModFreq = controllers[currentIndex].getOSCFreqModFreq().toFixed(1); // the value of the modulation frequency can be slightly different
-/*     console.log(currentModFreq);
- */    let positionCurrentModFreq = frequenciesModulation.indexOf(currentModFreq);
-    /*     console.log(positionCurrentModFreq);
-     */
+    // the value of the modulation frequency can be slightly different than initially set
+    let currentModFreq = controllers[currentIndex].getOSCFreqModFreq();
 
-    values.forEach((value, i) => {
-      value.setAttribute('value', frequenciesModulation[i]);
-    })
+
+    frequenciesModulation.forEach((ele, index) => {
+      // making the current modulation frequency precisely like in the array
+      let calc = ele - currentModFreq;
+      calc = Math.abs(calc.toFixed(1));
+
+      // current modulation frequency found
+      if (calc == 0) {
+        selector.setAttribute('theta-start', potentiometerSelectorPositions[index].position);
+      }
+    });
+
+
+
+    /* 
+        let positionCurrentModFreq = potentiometerSelectorPositions.find((el) => {
+          el == currentModFreq
+        }
+        );
+      */
+
 
 
 
@@ -1129,6 +1071,12 @@ AFRAME.registerComponent('potentiometer', {
     potentiometer.setAttribute('position', `${positionsX[currentIndex]} ${positionY - 1.5} ${positionsZ[currentIndex]}`);
     potentiometer.setAttribute('rotation', `0 ${rotationsY[currentIndex]} 0`);
     potentiometer.setAttribute('scale', '0.25 0.25 0.1');
+
+
+    // put values on potentiometer
+    values.forEach((value, i) => {
+      value.setAttribute('value', frequenciesModulation[i]);
+    })
 
     /* let currentSelectorPosition = selectorPositions[
       frequenciesModulation.indexOf(controllers[currentIndex].getOSCFreqModFreq())
@@ -1139,26 +1087,57 @@ AFRAME.registerComponent('potentiometer', {
     // get the modulation frequencies TODO get from controller
 
 
+    // init the clickable areas
+    valueAreas.forEach((valueArea, i) => {
 
-
-    /*  selector.setAttribute('theta-start', selectorPositions[i]); */
+      valueArea.setAttribute('color', 'red');
+    });
 
     valueAreas.forEach((valueArea, i) => {
+
+      valueArea.setAttribute('color', boxColorDefault);
+
       valueArea.addEventListener('mouseenter', () => {
         valueArea.setAttribute('color', buttonColorHover);
+
+        if (isHoveringControl) {
+          performClick(valueArea);
+        }
       });
+
       valueArea.addEventListener('mouseleave', () => {
         valueArea.setAttribute('color', boxColorDefault);
-      })
-      valueArea.addEventListener('click', () => {
-        controllers[currentIndex].setOSCFreqModFreq(selectorPositions[i].modfreq);
-        // value & value area go along with each other; getting with i
-        selector.setAttribute('theta-start', selectorPositions[i].position);
-        currentModFreq = controllers[currentIndex].getOSCFreqModFreq().toFixed(1);
 
+        if (isHoveringControl) {
+          performClick(valueArea);
+        }
+      })
+
+      valueArea.addEventListener('click', (ev) => {
+        if (isHoveringControl) return;
+        performClick(valueArea);
       });
     });
 
+    function performClick(valueArea) {
+      const index = Array.from(valueAreas).indexOf(valueArea);
+      // the appropriate modulation frequency comes via value area
+      controllers[currentIndex].setOSCFreqModFreq(potentiometerSelectorPositions[index].modFreq);
+      selector.setAttribute('theta-start', potentiometerSelectorPositions[index].position);
+    }
+    /**
+     *  Calculates the positions for the selector and stores them together with the corresponding 
+     *  modulation frequencies in potentiometerSelectorPositions.
+     */
+    function getSelectorPositions() {
 
+      for (let i = 0; i < frequenciesModulation.length; i++) {
+        let position = parseInt(valueAreas[i].getAttribute('theta-start')) + thetaLength / 2;
+        let modFreq = frequenciesModulation[i];
+        potentiometerSelectorPositions.push({ position, modFreq });
+      }
+      isSelectorPositionsSet = true;
+    }
   }
 });
+

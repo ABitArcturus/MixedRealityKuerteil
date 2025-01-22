@@ -102,8 +102,8 @@ export function addAFrameElements() {
         const selector = document.createElement('a-cylinder');
         selector.setAttribute('selector', '');
         selector.setAttribute('color', 'black');
-        selector.setAttribute('opacity', '0.5');
-     /*    selector.setAttribute('radius-inner', '0.1');
+/*         selector.setAttribute('opacity', '0.5');
+ */     /*    selector.setAttribute('radius-inner', '0.1');
         selector.setAttribute('radius-outer', '2'); */
         selector.setAttribute('scale', '1 1 0.8');
         selector.setAttribute('position', '0 0 0.1');
