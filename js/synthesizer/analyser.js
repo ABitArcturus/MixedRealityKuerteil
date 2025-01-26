@@ -43,8 +43,9 @@ function visualize() {
 
 }
 /**
+ * Returns the root mean square value of the audio.
  * 
- * @returns {number} 
+ * @returns {number} The root mean square value.
  */
 function getRMS() {
     analyser.getFloatFrequencyData(dataArrayFloat32);
@@ -61,12 +62,18 @@ function getRMS() {
 /**
  * Calculates the frequency for the given bin index.
  *
- * @param {number} index - The bin index.
+ * @param {number} index The bin index.
  * @return {number} The calculated frequency.
  */
 function getFrequencyByIndex(index) {
     return (index * nyquist) / bufferLength;
 }
+
+/**
+ * Returns the frequency with the highest amplitude/the currently playing frequency.
+ * 
+ * @returns The frequency value.
+ */
 function getFrequency() {
     analyser.getByteFrequencyData(dataArrayUint8);
 

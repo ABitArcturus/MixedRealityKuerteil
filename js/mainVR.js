@@ -764,7 +764,7 @@ requestAnimationFrame(tick);
  * Toggles the playing of the oscillator.
  * 
  * @param {*} controllerIndex Which oscillator to toggle.
- * @returns 
+ * @returns {void}
  */
 function triggerOSC(controllerIndex) {
   if (!isAudioActive) {

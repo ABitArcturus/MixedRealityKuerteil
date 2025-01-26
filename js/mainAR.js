@@ -5,18 +5,17 @@ window.addEventListener('DOMContentLoaded', () => {
   activateOSC();
 });
 
-let isAudioActive = false;
-let isClickActive = false;
-
 const controllers = [];
 const isOSCPlaying = [];
-
+let isAudioActive = false;
 
 const maxDistance = 10,
   minDistance = 2;
 const minFrequ = 20, maxFrequ = 20000;
 
-
+/**
+ * Initializes and configures several oscillators and saves them in the array controllers.
+ */
 function activateOSC() {
   isAudioActive = true;
 
@@ -42,33 +41,17 @@ function activateOSC() {
 
   controllers[3].setOSCFrequency(698);
   controllers[3].setOSCWaveform("triangle");
-
-  /* controllers[4].setOSCFrequency(784);
-  controllers[4].setOSCWaveform("triangle");
-
-  controllers[5].setOSCFrequency(880);
-
-  controllers[6].setOSCFrequency(987);
-  controllers[6].setOSCFreqModFreq(15);
-  controllers[6].setOSCWaveform("square");
- */
-
-
-
 }
-
-
-
-/* 
-<a-entity>.object3D is a reference to the entity’s three.js Object3D representation. 
-https://threejs.org/docs/#api/en/core/Object3D */
-
 
 const minFreq = 20, maxFreq = 20000;
 const toneVisualizerDefaultHeight = 0.5,
-  toneVisualizerDefaultWidth = 0.1,
-  toneVisualizerDefaultDepth = 0.5;
+  toneVisualizerDefaultWidth = 0.2,
+  toneVisualizerDefaultDepth = 0.2;
 
+
+/**
+ * Handles the marker components
+ */
 AFRAME.registerComponent('marker', {
 
   init: function () {
@@ -88,26 +71,22 @@ AFRAME.registerComponent('marker', {
 
     this.camera = this.el.sceneEl.camera;
 
-
-    /*     this.gainTextObject3D = this.gainText.object3D;
-     */
-
-
     // init
     this.toneVisualizer.setAttribute('color', 'green');
     this.toneVisualizer.setAttribute('material', 'opacity', 0.5);
+    this.toneVisualizer.setAttribute('material', 'transparent', true);
 
-    this.gainText.setAttribute('scale', '0.5 0.5 1');
+    this.gainText.setAttribute('scale', '0.5 0.5 0.2');
     this.gainText.setAttribute('position', '0 1 0');
     this.gainText.setAttribute('color', 'lime');
 
 
     this.freqText.setAttribute('scale', '0.5 0.5  1');
-    this.freqText.setAttribute('position', '0 0 0');
+    this.freqText.setAttribute('position', '0 0 0.2');
     this.freqText.setAttribute('color', 'lime');
 
     this.modFreqText.setAttribute('scale', '0.5 0.5 1');
-    this.modFreqText.setAttribute('position', '0 -1 0');
+    this.modFreqText.setAttribute('position', '0 -1 0.2');
     this.modFreqText.setAttribute('color', 'lime');
 
 
@@ -121,30 +100,31 @@ AFRAME.registerComponent('marker', {
       controllers[this.index].stopOSC();
     });
   },
-
+  /**
+   * Updates the marker component/ 3D objects.
+   */
   tick: function () {
+
     this.visible = this.el.object3D.visible;
     this.markerWorldPosition = this.el.object3D.position;
     this.markerRotation = this.el.object3D.rotation;
-    /*  this.cameraPosition = this.el.sceneEl.camera.el.object3D.position; */
     this.cameraPosition = this.el.sceneEl.object3D.position;
     this.gainTextObject3D = this.gainText.object3D;
     this.freqTextObject3D = this.freqText.object3D;
     this.modFreqTextObject3D = this.modFreqText.object3D;
-
   },
+
+  /**
+   * Renders the tone visualizer and performs the oscillator control.
+   * 
+   * @returns {void}
+   */
   run: function () {
     if (this.visible) {
       // revert to default appearance
       this.toneVisualizer.setAttribute('height', toneVisualizerDefaultHeight);
       this.toneVisualizer.setAttribute('width', toneVisualizerDefaultWidth);
       this.toneVisualizer.setAttribute('depth', toneVisualizerDefaultDepth);
-
-
-      /*       const x = Math.floor(this.markerWorldPosition.x * 100) / 100,
-              y = Math.floor(this.markerWorldPosition.y * 100) / 100,
-              z = Math.floor(this.markerWorldPosition.z * 100) / 100,
-              position = '' + x + ' ' + y + ' ' + z; */
 
       ////////////////////////      audio      ////////////////////////
 
@@ -177,7 +157,7 @@ AFRAME.registerComponent('marker', {
 
       // change frequency according to x position
       const delta = this.markerWorldPosition.x - this.lastXPosition;
-      const newFreq = Math.max(minFrequ, (this.currentFreq + delta * 100)); // TODO maxFrequ
+      const newFreq = Math.max(minFrequ, Math.min(this.currentFreq + delta * 100, maxFrequ)); // TODO maxFrequ
       this.currentFreq = newFreq;
       controllers[this.index].setOSCFrequency(newFreq);
 
@@ -187,8 +167,9 @@ AFRAME.registerComponent('marker', {
 
       // change appearance according to frequency
       let freq = getFrequency();
-      const normalizedFreq = (freq - minFreq) / (maxFreq - minFreq) * 100;
+      const normalizedFreq = (freq - minFreq) / (maxFreq - minFreq) * 10;
       this.toneVisualizer.setAttribute('width', `${toneVisualizerDefaultWidth + normalizedFreq}`);
+      this.toneVisualizer.setAttribute('depth', `${toneVisualizerDefaultDepth + normalizedFreq}`);
 
       // RMS
       const rms = getRMS() / 100;
@@ -198,15 +179,13 @@ AFRAME.registerComponent('marker', {
       ////////////////////////      text     ////////////////////////
 
       this.gainText.setAttribute('value', `gain: ${gain.toFixed(2)}`);
+      this.freqText.setAttribute('value', `frequency: ${freq.toFixed(0)}`);
+      this.modFreqText.setAttribute('value', `modulation frequency: ${controllers[this.index].getOSCFreqModFreq().toFixed(2)}`);
+
       // align the text towards the camera.
       this.gainTextObject3D.lookAt(this.cameraPosition);
-
-      this.freqText.setAttribute('value', `frequency: ${freq.toFixed(0)}`);
       this.freqTextObject3D.lookAt(this.cameraPosition);
-
-      this.modFreqText.setAttribute('value', `modulation frequency: ${controllers[this.index].getOSCFreqModFreq().toFixed(2)}`);
       this.modFreqTextObject3D.lookAt(this.cameraPosition);
-
 
     } else {
       return

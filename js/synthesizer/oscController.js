@@ -55,16 +55,17 @@ class OSC_Controller {
     /**
     * Sets the waveform of the oscillator.
     *
-    * @param {string} type - The type of waveform to set.
+    * @param {string} type The type of waveform to set.
     * @return {void}
     */
     setOSCWaveform(type) {
         this.osc.type = type;
     }
+
     /**
-     * Gets the waveform of the oscillator.
+     * Returns the waveform of the oscillator.
      *
-     * @return {string} - The type of waveform of the oscillator.
+     * @return {string} The type of waveform of the oscillator.
      */
     getOSCWaveform() {
         return this.osc.type;
@@ -73,7 +74,7 @@ class OSC_Controller {
     /**
      * Sets the frequency of the oscillator.
      *
-     * @param {number} freq - The frequency value to set for the oscillator in Hertz.
+     * @param {number} freq The frequency value to set for the oscillator in Hertz.
      * @return {void}
      */
     setOSCFrequency(freq) {
@@ -81,9 +82,9 @@ class OSC_Controller {
     }
 
     /**
-     * Gets the frequency of the oscillator.
+     * Returns the frequency of the oscillator.
      *
-     * @return {number} - The frequency value of the oscillator in Hertz.
+     * @return {number} The frequency value of the oscillator in Hertz.
      */
     getOSCFrequency() {
         return this.osc.frequency.value;
@@ -92,7 +93,7 @@ class OSC_Controller {
     /**
      * Sets the gain of the oscillator.
      *
-     * @param {number} gain - The gain value to set for the oscillator.
+     * @param {number} gain The gain value to set for the oscillator.
      * @return {void}
      */
     setOSCGain(gain) {
@@ -103,21 +104,36 @@ class OSC_Controller {
     /**
      * Sets the attack time of the oscillator in seconds.
      *
-     * @param {number} attack - The attack time of the oscillator in seconds.
+     * @param {number} attack The attack time of the oscillator in seconds.
      * @return {void}
      */
     setOSCAttack(attack) {
         this.oscAttack = attack;
     }
 
+    /**
+     * Sets the decay time of the oscillator in seconds.
+     * 
+     * @param {*} decay The decay time of the oscillator in seconds.
+    */
     setOSCDecay(decay) {
         this.oscDecay = decay;
     }
 
+    /**
+     * Sets the sustain value of the oscillator.
+     * 
+     * @param {*} sustain The sustain value of the oscillator.
+     */
     setOSCSustain(sustain) {
         this.oscSustain = sustain;
     }
 
+    /**
+     * Sets the release time of the oscillator in seconds.
+     * 
+     * @param {*} release The release time of the oscillator in seconds.
+     */
     setOSCRelease(release) {
         this.oscRelease = release;
     }
@@ -132,6 +148,7 @@ class OSC_Controller {
         const factor = Math.pow(2, semitones / 12);
         this.osc.frequency.value *= factor;
     }
+
     /**
     * Switches the frequency modulation on/off.
     *
@@ -147,6 +164,11 @@ class OSC_Controller {
         }
     }
 
+    /**
+     * Sets the gain of the frequency modulator.
+     * 
+     * @param {*} gain The gain value to set for the frequency modulator.
+     */
     setOSCFrequModGain(gain) {
         this.oscFreqModCurrentGain = gain;
         if (this.oscFreqModOn) {
@@ -154,13 +176,29 @@ class OSC_Controller {
         }
     }
 
+    /**
+     * Sets the frequency of the frequency modulator.
+     * 
+     * @param {*} freq The frequency value to set for the frequency modulator.
+     */
     setOSCFreqModFreq(freq) {
         this.oscFreqMod.frequency.value = freq;
     }
+
+    /**
+     * Returns the frequency of the frequency modulator.
+     * 
+     * @returns The frequency value of the frequency modulator.
+     */
     getOSCFreqModFreq() {
         return this.oscFreqMod.frequency.value;
     }
 
+    /**
+     * Sets the frequency of the ring modulator.
+     * 
+     * @param {*} freq The frequency value to set for the ring modulator.
+     */
     setOSCRingModFreq(freq) {
         this.oscRingModFrequency = freq;
         if (this.oscRingModOn) {
@@ -168,6 +206,10 @@ class OSC_Controller {
         }
     }
 
+    /**
+     * Toggles the ring modulator on/off.
+     * 
+     */
     toggleOSCRingModFreq() {
         if (this.oscRingModOn) {
             this.oscRingMod.frequency.value = 0;

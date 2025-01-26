@@ -9,9 +9,24 @@
 </head>
 
 <body>
+    <div id="container">
+        <h1>
+            syntheziser
+        </h1>
+        <div id="messages"></div>
+        <div class="buttons">
+            <a href="vr.html" class="button">VR version</a>
+            <a href="ar.html" class="button">AR version</a>
+            Works with markers.
+            <a href="vr.html?lightEffect=true" class="button">VR version 2</a>
+            With additional light effect - requires more processing power.
+        </div>
+    </div>
+    </div>
     <script>
         async function checkWebXR() {
 
+            const messages = document.getElementById("messages");
             // check webXR support
             if (!navigator.xr) {
                 console.log("This browser does not support WebXR.");
@@ -43,19 +58,7 @@
             }
         }
         checkWebXR();
-
     </script>
-    <div id="container">
-        <div id="messages"></div>
-    </div>
-    <div class="buttons">
-        <a href="vr.html" class="button">VR version</a>
-        <a href="ar.html" class="button">AR version</a>
-        <a href="vr.html?lightEffect=true" class="button">VR version with addition light effect</a>
-
-
-    </div>
-    </div>
 </body>
 
 </html>
