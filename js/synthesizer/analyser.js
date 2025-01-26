@@ -19,9 +19,6 @@ const maxFreq = 20000,
  */
 function visualize() {
 
-
-
-
     // get the data from the analyser
     analyser.getByteFrequencyData(dataArrayUint8);
     console.log(dataArrayUint8);
@@ -45,16 +42,20 @@ function visualize() {
     /*     requestAnimationFrame(visualize); */
 
 }
-function getLoudness() {
+/**
+ * 
+ * @returns {number} 
+ */
+function getRMS() {
     analyser.getFloatFrequencyData(dataArrayFloat32);
 
     let sum = 0;
     for (let i = 0; i < bufferLength; i++) {
-        sum += Math.pow(dataArrayFloat32[i], 2); 
+        sum += Math.pow(dataArrayFloat32[i], 2);
     }
 
-    const rms = Math.sqrt(sum / bufferLength);  
-return rms;
+    const rms = Math.sqrt(sum / bufferLength);
+    return rms;
 }
 
 /**
@@ -67,6 +68,8 @@ function getFrequencyByIndex(index) {
     return (index * nyquist) / bufferLength;
 }
 function getFrequency() {
+    analyser.getByteFrequencyData(dataArrayUint8);
+
     let maxAmplitude = 0;
     let maxIndex = 0;
 
@@ -250,4 +253,4 @@ function handleHighFrequency(frequency, gain) {
     console.log("high frequency: ", frequency.toFixed(2), " Hz, gain: ", gain.toFixed(2), " dB");
 }
 
-export { visualize, checkAverageGainOverThreshold, calculateAverageGain, getFrequency, getLoudness };
+export { visualize, checkAverageGainOverThreshold, calculateAverageGain, getFrequency, getRMS };

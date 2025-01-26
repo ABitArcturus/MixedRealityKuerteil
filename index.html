@@ -14,13 +14,10 @@
 
             // check webXR support
             if (!navigator.xr) {
-                // navigator.xr = globales objekt
                 console.log("This browser does not support WebXR.");
                 const message = document.createElement('p');
                 message.textContent = "This browser does not support WebXR.";
                 messages.appendChild(message);
-
-
             }
             const vrSupported = await navigator.xr.isSessionSupported('immersive-vr');
             if (vrSupported) {
@@ -48,11 +45,16 @@
         checkWebXR();
 
     </script>
-    <div id="messages"></div>
+    <div id="container">
+        <div id="messages"></div>
     </div>
     <div class="buttons">
         <a href="vr.html" class="button">VR version</a>
         <a href="ar.html" class="button">AR version</a>
+        <a href="vr.html?lightEffect=true" class="button">VR version with addition light effect</a>
+
+
+    </div>
     </div>
 </body>
 

@@ -4,14 +4,22 @@
 
 /* index */
 .buttons {
-
-    display: flex;
+    /*  position: absolute;
+    top: 40%; */
+    /* display: flex; */
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    /* height: 100vh;
+
+/*     display: grid;
+    row-gap: 100px; */
+  
+    display: flex;         /* Use flexbox for layout */
+    flex-wrap: wrap;  
 }
 
 .button {
+    width: 100px;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -19,6 +27,13 @@
     color: #fff;
     text-decoration: none;
     transition: all 0.2s ease-in-out;
+
+    margin-bottom: 10px; 
+
+}
+.button:nth-child(3) {
+    margin-right: 0;       /* Remove margin from the third button */
+    flex-basis: 100%;      /* Make the third button take full width */
 }
 
 .button:hover {
@@ -32,22 +47,22 @@ a {
 }
 
 #messages {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    padding-top: 10%;
     text-align: center;
 }
 
 /* VR */
-#overlay {
+#help-overlay {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%;
     height: 80%;
-    background-color: rgba(255, 255, 255, 0.5);
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(255, 255, 255, 0.8);
     display: none;
     z-index: 1;
 }

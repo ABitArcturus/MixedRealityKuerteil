@@ -35,23 +35,41 @@
       <a-cursor color="#FF0000" fuse="false" raycaster="objects: .clickable"></a-cursor>
     </a-camera> -->
 
-
+    <!-- the index attribute and waveform must be aligned with the values in the 'controllers' array to ensure consistency -->
     <a-marker marker index="0" waveform="sine" type="pattern" url="./ar-markers/pattern-sine.patt">
-      <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
-      </a-entity>
+      <!--   <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
+      </a-entity> -->
+      <a-box tone-visualizer></a-box>
+      <a-text gain></a-text>
+      <a-text frequency></a-text>
+      <a-text mod-freq></a-text>
+
+
     </a-marker>
-    <a-marker marker index="1" waveform="sawtooth" type="pattern" url="./ar-markers/pattern-sawtooth.patt">
-      <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
-      </a-entity>
+    <a-marker marker index="1" waveform="square" type="pattern" url="./ar-markers/pattern-square.patt">
+      <!--   <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
+      </a-entity> -->
+      <a-box tone-visualizer></a-box>
+      <a-text gain></a-text>
+      <a-text frequency></a-text>
+      <a-text mod-freq></a-text>
     </a-marker>
 
-    <a-marker marker index="2" waveform="square" type="pattern" url="./ar-markers/pattern-square.patt">
-      <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
-      </a-entity>
+    <a-marker marker index="2" waveform="sawtooth" type="pattern" url="./ar-markers/pattern-sawtooth.patt">
+      <!-- <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
+      </a-entity> -->
+      <a-box tone-visualizer></a-box>
+      <a-text gain></a-text>
+      <a-text frequency></a-text>
+      <a-text mod-freq></a-text>
     </a-marker>
     <a-marker marker index="3" waveform="triangle" type="pattern" url="./ar-markers/pattern-triangle.patt">
-      <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
-      </a-entity>
+      <!-- <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: red;">
+      </a-entity> -->
+      <a-box tone-visualizer></a-box>
+      <a-text gain></a-text>
+      <a-text frequency></a-text>
+      <a-text mod-freq></a-text>
     </a-marker>
 
 
